@@ -378,10 +378,10 @@ export default function DatasetDetailPage({ params }: { params: Promise<{ id: st
         {/* Detail Grid */}
         <div className="grid gap-6 md:grid-cols-2">
           <DetailCard title="Overview">
-            <div className="flex items-start justify-between py-2 border-b border-[--color-border]">
-              <span className="text-sm text-[--color-text-muted]">ID</span>
-              <span className="flex items-center gap-2 text-sm font-[family-name:var(--font-geist-mono)] text-[--color-text-primary] text-right max-w-[60%]">
-                <span className="break-all min-w-0">{dataset.id}</span>
+            <div className="flex items-start justify-between gap-3 py-2 border-b border-[--color-border]">
+              <span className="text-sm text-[--color-text-muted] flex-shrink-0">ID</span>
+              <span className="flex items-center gap-2 text-sm font-[family-name:var(--font-geist-mono)] text-[--color-text-primary] min-w-0 text-right">
+                <span className="whitespace-nowrap overflow-x-auto min-w-0">{dataset.id}</span>
                 <span className="flex-shrink-0">
                   <CopyButton text={dataset.id} />
                 </span>
