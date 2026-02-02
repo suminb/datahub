@@ -1,0 +1,21 @@
+# Dependencies
+node_modules
+
+# Build outputs
+.next
+out
+build
+dist
+
+# Coverage
+coverage
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Misc
+*.log
+.DS_Store
+package-lock.json
