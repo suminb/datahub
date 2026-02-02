@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: web
-          image: zot.whiterabbit.co.kr/apps/datahub:latest
+          image: zot.whiterabbit.co.kr/app/datahub:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 3000
