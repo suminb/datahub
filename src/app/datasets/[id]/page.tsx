@@ -391,7 +391,7 @@ export default function DatasetDetailPage({ params }: { params: Promise<{ id: st
             <div className="flex items-start justify-between gap-3 py-2 border-b border-[--color-border]">
               <span className="text-sm text-[--color-text-muted] flex-shrink-0">ID</span>
               <span className="flex items-center gap-2 text-sm font-[family-name:var(--font-geist-mono)] text-[--color-text-primary] min-w-0 text-right">
-                <span className="whitespace-nowrap overflow-x-auto min-w-0">{dataset.id}</span>
+                <span className="whitespace-nowrap overflow-x-auto min-w-0 select-all cursor-text">{dataset.id}</span>
                 <span className="flex-shrink-0">
                   <CopyButton text={dataset.id} />
                 </span>
