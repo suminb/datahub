@@ -6,8 +6,8 @@ on:
     branches: [main, master, develop]
 
 jobs:
-  test:
-    name: Test Suite
+  ci:
+    name: CI (Node ${{ matrix.node-version }})
     runs-on: ${{ vars.RUNNER || 'ubuntu-latest' }}
 
     strategy:
@@ -28,14 +28,28 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run tests with coverage
+      - name: Lint
+        run: npm run lint
+
+      - name: Check code formatting
+        run: npm run format -- --check
+
+      - name: Type check
+        run: npm run type-check
+
+      - name: Test
         run: npm test -- --coverage --ci
         env:
           CI: true
 
+      - name: Build
+        run: npm run build
+        env:
+          DATABASE_URL: postgresql://test:test@localhost:5432/test
+
       - name: Upload coverage reports
-        uses: codecov/codecov-action@v5
         if: matrix.node-version == '20.x'
+        uses: codecov/codecov-action@v5
         with:
           files: ./coverage/lcov.info
           flags: unittests
@@ -44,82 +58,15 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Upload coverage artifacts
-        uses: actions/upload-artifact@v6
         if: matrix.node-version == '20.x'
+        uses: actions/upload-artifact@v6
         with:
           name: coverage-report
           path: coverage
           retention-days: 7
 
-  lint:
-    name: Linting
-    runs-on: ${{ vars.RUNNER || 'ubuntu-latest' }}
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: "20.x"
-          cache: "npm"
-          cache-dependency-path: package-lock.json
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run ESLint
-        run: npm run lint
-
-      - name: Check code formatting
-        run: npm run format -- --check
-
-  type-check:
-    name: Type Checking
-    runs-on: ${{ vars.RUNNER || 'ubuntu-latest' }}
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: "20.x"
-          cache: "npm"
-          cache-dependency-path: package-lock.json
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run TypeScript type checking
-        run: npm run type-check
-
-  build:
-    name: Build
-    runs-on: ${{ vars.RUNNER || 'ubuntu-latest' }}
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: "20.x"
-          cache: "npm"
-          cache-dependency-path: package-lock.json
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build Next.js application
-        run: npm run build
-        env:
-          DATABASE_URL: postgresql://test:test@localhost:5432/test
-
       - name: Upload build artifacts
+        if: matrix.node-version == '20.x'
         uses: actions/upload-artifact@v6
         with:
           name: nextjs-build
