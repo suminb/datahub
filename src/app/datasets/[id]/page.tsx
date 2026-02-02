@@ -36,6 +36,51 @@ function DetailRow({ label, value }: { label: string; value: React.ReactNode }) 
   );
 }
 
+function CopyButton({ text, label = "Copy" }: { text: string; label?: string }) {
+  const [copied, setCopied] = useState(false);
+  const [infoMessage, setInfoMessage] = useState<string | null>(null);
+
+  const handleCopy = async () => {
+    setInfoMessage(null);
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      setInfoMessage("Copy to clipboard is only available on HTTPS or localhost.");
+      setTimeout(() => setInfoMessage(null), 5000);
+    }
+  };
+
+  return (
+    <span className="inline-flex flex-col items-end gap-1">
+      <button
+        type="button"
+        onClick={handleCopy}
+        className="inline-flex items-center gap-1.5 rounded-md border border-[--color-border] bg-[--color-bg-tertiary] px-2 py-1 text-xs font-medium text-[--color-text-secondary] transition-colors hover:bg-[--color-bg-hover] hover:text-[--color-text-primary] focus:outline-none focus:ring-2 focus:ring-[--color-accent] focus:ring-offset-1 focus:ring-offset-[--color-bg-secondary]"
+        title={copied ? "Copied!" : "Copy to clipboard"}
+      >
+        {copied ? (
+          <>
+            <span aria-hidden>✓</span>
+            <span>Copied</span>
+          </>
+        ) : (
+          <>
+            <span aria-hidden>⎘</span>
+            <span>{label}</span>
+          </>
+        )}
+      </button>
+      {infoMessage && (
+        <span className="text-xs text-[--color-text-muted] max-w-[220px] text-right">
+          {infoMessage}
+        </span>
+      )}
+    </span>
+  );
+}
+
 function JsonBlock({ data }: { data: Record<string, unknown> }) {
   if (Object.keys(data).length === 0) {
     return <p className="text-sm text-[--color-text-muted]">No data</p>;
@@ -343,7 +388,15 @@ export default function DatasetDetailPage({ params }: { params: Promise<{ id: st
         {/* Detail Grid */}
         <div className="grid gap-6 md:grid-cols-2">
           <DetailCard title="Overview">
-            <DetailRow label="ID" value={dataset.id} />
+            <div className="flex items-start justify-between gap-3 py-2 border-b border-[--color-border]">
+              <span className="text-sm text-[--color-text-muted] flex-shrink-0">ID</span>
+              <span className="flex items-center gap-2 text-sm font-[family-name:var(--font-geist-mono)] text-[--color-text-primary] min-w-0 text-right">
+                <span className="whitespace-nowrap overflow-x-auto min-w-0 select-all cursor-text">{dataset.id}</span>
+                <span className="flex-shrink-0">
+                  <CopyButton text={dataset.id} />
+                </span>
+              </span>
+            </div>
             <DetailRow label="Items" value={formatNumber(dataset.item_count)} />
             <DetailRow label="Size" value={formatBytes(dataset.total_size_bytes)} />
             <DetailRow label="Checksum" value={dataset.checksum || "—"} />
