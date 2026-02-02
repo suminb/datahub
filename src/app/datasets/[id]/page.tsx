@@ -36,6 +36,41 @@ function DetailRow({ label, value }: { label: string; value: React.ReactNode }) 
   );
 }
 
+function CopyButton({ text, label = "Copy" }: { text: string; label?: string }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      setCopied(false);
+    }
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={handleCopy}
+      className="inline-flex items-center gap-1.5 rounded-md border border-[--color-border] bg-[--color-bg-tertiary] px-2 py-1 text-xs font-medium text-[--color-text-secondary] transition-colors hover:bg-[--color-bg-hover] hover:text-[--color-text-primary] focus:outline-none focus:ring-2 focus:ring-[--color-accent] focus:ring-offset-1 focus:ring-offset-[--color-bg-secondary]"
+      title={copied ? "Copied!" : "Copy to clipboard"}
+    >
+      {copied ? (
+        <>
+          <span aria-hidden>✓</span>
+          <span>Copied</span>
+        </>
+      ) : (
+        <>
+          <span aria-hidden>⎘</span>
+          <span>{label}</span>
+        </>
+      )}
+    </button>
+  );
+}
+
 function JsonBlock({ data }: { data: Record<string, unknown> }) {
   if (Object.keys(data).length === 0) {
     return <p className="text-sm text-[--color-text-muted]">No data</p>;
@@ -343,7 +378,15 @@ export default function DatasetDetailPage({ params }: { params: Promise<{ id: st
         {/* Detail Grid */}
         <div className="grid gap-6 md:grid-cols-2">
           <DetailCard title="Overview">
-            <DetailRow label="ID" value={dataset.id} />
+            <div className="flex items-start justify-between py-2 border-b border-[--color-border]">
+              <span className="text-sm text-[--color-text-muted]">ID</span>
+              <span className="flex items-center gap-2 text-sm font-[family-name:var(--font-geist-mono)] text-[--color-text-primary] text-right max-w-[60%]">
+                <span className="break-all min-w-0">{dataset.id}</span>
+                <span className="flex-shrink-0">
+                  <CopyButton text={dataset.id} />
+                </span>
+              </span>
+            </div>
             <DetailRow label="Items" value={formatNumber(dataset.item_count)} />
             <DetailRow label="Size" value={formatBytes(dataset.total_size_bytes)} />
             <DetailRow label="Checksum" value={dataset.checksum || "—"} />
