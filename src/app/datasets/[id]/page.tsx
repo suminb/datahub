@@ -38,36 +38,46 @@ function DetailRow({ label, value }: { label: string; value: React.ReactNode }) 
 
 function CopyButton({ text, label = "Copy" }: { text: string; label?: string }) {
   const [copied, setCopied] = useState(false);
+  const [infoMessage, setInfoMessage] = useState<string | null>(null);
 
   const handleCopy = async () => {
+    setInfoMessage(null);
     try {
       await navigator.clipboard.writeText(text);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      setCopied(false);
+      setInfoMessage("Copy to clipboard is only available on HTTPS or localhost.");
+      setTimeout(() => setInfoMessage(null), 5000);
     }
   };
 
   return (
-    <button
-      type="button"
-      onClick={handleCopy}
-      className="inline-flex items-center gap-1.5 rounded-md border border-[--color-border] bg-[--color-bg-tertiary] px-2 py-1 text-xs font-medium text-[--color-text-secondary] transition-colors hover:bg-[--color-bg-hover] hover:text-[--color-text-primary] focus:outline-none focus:ring-2 focus:ring-[--color-accent] focus:ring-offset-1 focus:ring-offset-[--color-bg-secondary]"
-      title={copied ? "Copied!" : "Copy to clipboard"}
-    >
-      {copied ? (
-        <>
-          <span aria-hidden>✓</span>
-          <span>Copied</span>
-        </>
-      ) : (
-        <>
-          <span aria-hidden>⎘</span>
-          <span>{label}</span>
-        </>
+    <span className="inline-flex flex-col items-end gap-1">
+      <button
+        type="button"
+        onClick={handleCopy}
+        className="inline-flex items-center gap-1.5 rounded-md border border-[--color-border] bg-[--color-bg-tertiary] px-2 py-1 text-xs font-medium text-[--color-text-secondary] transition-colors hover:bg-[--color-bg-hover] hover:text-[--color-text-primary] focus:outline-none focus:ring-2 focus:ring-[--color-accent] focus:ring-offset-1 focus:ring-offset-[--color-bg-secondary]"
+        title={copied ? "Copied!" : "Copy to clipboard"}
+      >
+        {copied ? (
+          <>
+            <span aria-hidden>✓</span>
+            <span>Copied</span>
+          </>
+        ) : (
+          <>
+            <span aria-hidden>⎘</span>
+            <span>{label}</span>
+          </>
+        )}
+      </button>
+      {infoMessage && (
+        <span className="text-xs text-[--color-text-muted] max-w-[220px] text-right">
+          {infoMessage}
+        </span>
       )}
-    </button>
+    </span>
   );
 }
 
