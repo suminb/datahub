@@ -16,20 +16,17 @@ export function getDatabaseErrorMessage(error: unknown): string {
 
     if (dbError.code === "23505") {
       // Unique constraint violation
-      const constraint = dbError.constraint || "unique constraint";
-      return `Duplicate entry violates ${constraint}`;
+      return "Duplicate entry: a record with this value already exists";
     }
 
     if (dbError.code === "23503") {
       // Foreign key violation
-      const constraint = dbError.constraint || "foreign key constraint";
-      return `Invalid reference violates ${constraint}`;
+      return "Invalid reference: the referenced record does not exist";
     }
 
     if (dbError.code === "23514") {
       // Check constraint violation
-      const constraint = dbError.constraint || "check constraint";
-      return `Data violates ${constraint}`;
+      return "Invalid data: the value does not meet validation requirements";
     }
 
     // Return the database error message if available

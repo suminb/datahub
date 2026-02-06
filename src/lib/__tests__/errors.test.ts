@@ -21,7 +21,7 @@ describe("getDatabaseErrorMessage", () => {
     };
 
     const result = getDatabaseErrorMessage(error);
-    expect(result).toBe("Duplicate entry violates datasets_name_unique");
+    expect(result).toBe("Duplicate entry: a record with this value already exists");
   });
 
   it("should handle foreign key violations", () => {
@@ -32,7 +32,7 @@ describe("getDatabaseErrorMessage", () => {
     };
 
     const result = getDatabaseErrorMessage(error);
-    expect(result).toBe("Invalid reference violates fk_datasets_owner");
+    expect(result).toBe("Invalid reference: the referenced record does not exist");
   });
 
   it("should handle check constraint violations", () => {
@@ -43,7 +43,7 @@ describe("getDatabaseErrorMessage", () => {
     };
 
     const result = getDatabaseErrorMessage(error);
-    expect(result).toBe("Data violates check_positive_size");
+    expect(result).toBe("Invalid data: the value does not meet validation requirements");
   });
 
   it("should handle database errors with message but no code", () => {
