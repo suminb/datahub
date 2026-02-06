@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import pool from "@/lib/db";
+import { getDatabaseErrorMessage } from "@/lib/errors";
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -14,7 +15,8 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     return NextResponse.json(result.rows[0]);
   } catch (error) {
     console.error("Failed to fetch dataset:", error);
-    return NextResponse.json({ error: "Failed to fetch dataset" }, { status: 500 });
+    const errorMessage = getDatabaseErrorMessage(error);
+    return NextResponse.json({ error: `Failed to fetch dataset: ${errorMessage}` }, { status: 500 });
   }
 }
 
@@ -74,7 +76,8 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
     return NextResponse.json(result.rows[0]);
   } catch (error) {
     console.error("Failed to update dataset:", error);
-    return NextResponse.json({ error: "Failed to update dataset" }, { status: 500 });
+    const errorMessage = getDatabaseErrorMessage(error);
+    return NextResponse.json({ error: `Failed to update dataset: ${errorMessage}` }, { status: 500 });
   }
 }
 
@@ -94,6 +97,7 @@ export async function DELETE(
     return new NextResponse(null, { status: 204 });
   } catch (error) {
     console.error("Failed to delete dataset:", error);
-    return NextResponse.json({ error: "Failed to delete dataset" }, { status: 500 });
+    const errorMessage = getDatabaseErrorMessage(error);
+    return NextResponse.json({ error: `Failed to delete dataset: ${errorMessage}` }, { status: 500 });
   }
 }

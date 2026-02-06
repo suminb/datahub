@@ -93,7 +93,7 @@ describe("/api/datasets GET", () => {
 
     expect(response.status).toBe(500);
     const data = await response.json();
-    expect(data.error).toBe("Failed to fetch datasets");
+    expect(data.error).toBe("Failed to fetch datasets: Database error");
   });
 });
 
@@ -168,6 +168,27 @@ describe("/api/datasets POST", () => {
 
     expect(response.status).toBe(500);
     const data = await response.json();
-    expect(data.error).toBe("Failed to create dataset");
+    expect(data.error).toBe("Failed to create dataset: Insert failed");
+  });
+
+  it("handles NOT NULL constraint violations with helpful message", async () => {
+    const dbError = {
+      code: "23502",
+      column: "storage_backend",
+      table: "datasets",
+      message: 'null value in column "storage_backend" violates not-null constraint',
+    };
+    mockPool.query.mockRejectedValueOnce(dbError);
+
+    const request = new NextRequest("http://localhost:3000/api/datasets", {
+      method: "POST",
+      body: JSON.stringify({ name: "Test", source_type: "notion" }),
+    });
+
+    const response = await POST(request);
+
+    expect(response.status).toBe(500);
+    const data = await response.json();
+    expect(data.error).toBe("Failed to create dataset: Missing required field: storage_backend in datasets");
   });
 });

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import pool from "@/lib/db";
+import { getDatabaseErrorMessage } from "@/lib/errors";
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
@@ -78,6 +79,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error("Search failed:", error);
-    return NextResponse.json({ error: "Search failed" }, { status: 500 });
+    const errorMessage = getDatabaseErrorMessage(error);
+    return NextResponse.json({ error: `Search failed: ${errorMessage}` }, { status: 500 });
   }
 }
