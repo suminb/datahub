@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import pool from "@/lib/db";
 import { randomUUID } from "crypto";
+import { getDatabaseErrorMessage } from "@/lib/errors";
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
@@ -46,7 +47,8 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error("Failed to fetch datasets:", error);
-    return NextResponse.json({ error: "Failed to fetch datasets" }, { status: 500 });
+    const errorMessage = getDatabaseErrorMessage(error);
+    return NextResponse.json({ error: `Failed to fetch datasets: ${errorMessage}` }, { status: 500 });
   }
 }
 
@@ -93,6 +95,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(result.rows[0], { status: 201 });
   } catch (error) {
     console.error("Failed to create dataset:", error);
-    return NextResponse.json({ error: "Failed to create dataset" }, { status: 500 });
+    const errorMessage = getDatabaseErrorMessage(error);
+    return NextResponse.json({ error: `Failed to create dataset: ${errorMessage}` }, { status: 500 });
   }
 }

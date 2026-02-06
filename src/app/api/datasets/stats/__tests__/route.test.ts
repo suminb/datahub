@@ -99,6 +99,6 @@ describe("/api/datasets/stats GET", () => {
 
     expect(response.status).toBe(500);
     const data = await response.json();
-    expect(data.error).toBe("Failed to fetch stats");
+    expect(data.error).toBe("Failed to fetch stats: Query failed");
   });
 });

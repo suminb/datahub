@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import pool from "@/lib/db";
+import { getDatabaseErrorMessage } from "@/lib/errors";
 
 export async function GET() {
   try {
@@ -43,6 +44,7 @@ export async function GET() {
     });
   } catch (error) {
     console.error("Failed to fetch stats:", error);
-    return NextResponse.json({ error: "Failed to fetch stats" }, { status: 500 });
+    const errorMessage = getDatabaseErrorMessage(error);
+    return NextResponse.json({ error: `Failed to fetch stats: ${errorMessage}` }, { status: 500 });
   }
 }
