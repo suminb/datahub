@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import pool from "@/lib/db";
 import { getDatabaseErrorMessage } from "@/lib/errors";
+import { requireApiKey } from "@/lib/middleware";
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const authError = await requireApiKey(request);
+  if (authError) return authError;
+
   const { id } = await params;
 
   try {
@@ -21,6 +25,9 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 }
 
 export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const authError = await requireApiKey(request);
+  if (authError) return authError;
+
   const { id } = await params;
 
   try {
@@ -85,6 +92,9 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const authError = await requireApiKey(request);
+  if (authError) return authError;
+
   const { id } = await params;
 
   try {

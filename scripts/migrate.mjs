@@ -63,6 +63,21 @@ const migrations = [
   `CREATE INDEX IF NOT EXISTS ix_datasets_owner ON datasets(owner)`,
   `CREATE INDEX IF NOT EXISTS ix_datasets_created_at ON datasets(created_at)`,
   `CREATE INDEX IF NOT EXISTS ix_datasets_tags ON datasets USING GIN(tags)`,
+
+  // Create api_keys table
+  `CREATE TABLE IF NOT EXISTS api_keys (
+    id VARCHAR(36) PRIMARY KEY,
+    key_hash VARCHAR(64) NOT NULL UNIQUE,
+    name VARCHAR(255) NOT NULL,
+    status VARCHAR(50) DEFAULT 'active',
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    last_used_at TIMESTAMPTZ,
+    revoked_at TIMESTAMPTZ
+  )`,
+
+  // Create indexes for api_keys
+  `CREATE INDEX IF NOT EXISTS ix_api_keys_key_hash ON api_keys(key_hash)`,
+  `CREATE INDEX IF NOT EXISTS ix_api_keys_status ON api_keys(status)`,
 ];
 
 async function migrate() {
