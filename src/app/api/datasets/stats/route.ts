@@ -2,6 +2,48 @@ import { NextResponse } from "next/server";
 import pool from "@/lib/db";
 import { getDatabaseErrorMessage } from "@/lib/errors";
 
+/**
+ * @openapi
+ * /datasets/stats:
+ *   get:
+ *     summary: Get aggregate statistics
+ *     description: Retrieve aggregate statistics about datasets
+ *     tags:
+ *       - Datasets
+ *     responses:
+ *       200:
+ *         description: Dataset statistics
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 total_datasets:
+ *                   type: integer
+ *                   description: Total number of datasets
+ *                 total_items:
+ *                   type: integer
+ *                   description: Total number of items across all datasets
+ *                 total_bytes:
+ *                   type: integer
+ *                   description: Total size of all datasets in bytes
+ *                 by_source_type:
+ *                   type: object
+ *                   description: Dataset count by source type
+ *                   additionalProperties:
+ *                     type: integer
+ *                 by_status:
+ *                   type: object
+ *                   description: Dataset count by status
+ *                   additionalProperties:
+ *                     type: integer
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 export async function GET() {
   try {
     // Aggregate stats

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { openApiSpec } from "@/lib/openapi";
+import { swaggerSpec } from "@/lib/swagger";
 
 export async function GET() {
-  return NextResponse.json(openApiSpec);
+  return NextResponse.json(swaggerSpec);
 }
