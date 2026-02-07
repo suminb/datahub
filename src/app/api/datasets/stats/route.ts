@@ -3,10 +3,6 @@ import pool from "@/lib/db";
 import { getDatabaseErrorMessage } from "@/lib/errors";
 import { requireApiKey } from "@/lib/middleware";
 
-export async function GET(request: NextRequest) {
-  const authError = await requireApiKey(request);
-  if (authError) return authError;
-
 /**
  * @openapi
  * /datasets/stats:
@@ -49,7 +45,10 @@ export async function GET(request: NextRequest) {
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const authError = await requireApiKey(request);
+  if (authError) return authError;
+
   try {
     // Aggregate stats
     const statsResult = await pool.query(`
