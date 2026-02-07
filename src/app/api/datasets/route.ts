@@ -2,8 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import pool from "@/lib/db";
 import { randomUUID } from "crypto";
 import { getDatabaseErrorMessage } from "@/lib/errors";
+import { requireApiKey } from "@/lib/middleware";
 
 export async function GET(request: NextRequest) {
+  const authError = await requireApiKey(request);
+  if (authError) return authError;
   const searchParams = request.nextUrl.searchParams;
   const source_type = searchParams.get("source_type");
   const status = searchParams.get("status");
@@ -53,6 +56,9 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  const authError = await requireApiKey(request);
+  if (authError) return authError;
+
   try {
     const body = await request.json();
     const id = body.id || randomUUID();
