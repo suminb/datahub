@@ -52,7 +52,9 @@ export async function validateApiKey(key: string): Promise<ApiKey | null> {
 
     const apiKey = result.rows[0] as ApiKey;
 
-    // Update last_used_at timestamp asynchronously
+    // Update last_used_at timestamp asynchronously (fire-and-forget)
+    // Note: In high-concurrency scenarios, this may not reflect the exact last use
+    // due to potential race conditions. This is acceptable as it's for audit purposes only.
     pool
       .query(`UPDATE api_keys SET last_used_at = NOW() WHERE id = $1`, [apiKey.id])
       .catch((error) => {
