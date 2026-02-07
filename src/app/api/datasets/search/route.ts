@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import pool from "@/lib/db";
 import { getDatabaseErrorMessage } from "@/lib/errors";
+import { requireApiKey } from "@/lib/middleware";
 
 /**
  * @openapi
@@ -96,6 +97,9 @@ import { getDatabaseErrorMessage } from "@/lib/errors";
  *               $ref: '#/components/schemas/Error'
  */
 export async function GET(request: NextRequest) {
+  const authError = await requireApiKey(request);
+  if (authError) return authError;
+
   const searchParams = request.nextUrl.searchParams;
   const q = searchParams.get("q");
   const source_type = searchParams.get("source_type");

@@ -1,6 +1,11 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import pool from "@/lib/db";
 import { getDatabaseErrorMessage } from "@/lib/errors";
+import { requireApiKey } from "@/lib/middleware";
+
+export async function GET(request: NextRequest) {
+  const authError = await requireApiKey(request);
+  if (authError) return authError;
 
 /**
  * @openapi

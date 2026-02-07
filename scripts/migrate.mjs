@@ -63,6 +63,31 @@ const migrations = [
   `CREATE INDEX IF NOT EXISTS ix_datasets_owner ON datasets(owner)`,
   `CREATE INDEX IF NOT EXISTS ix_datasets_created_at ON datasets(created_at)`,
   `CREATE INDEX IF NOT EXISTS ix_datasets_tags ON datasets USING GIN(tags)`,
+
+  // Create enum type for API key status
+  `DO $$ BEGIN
+    CREATE TYPE api_key_status AS ENUM ('active', 'revoked');
+  EXCEPTION
+    WHEN duplicate_object THEN null;
+  END $$`,
+
+  // Create api_keys table
+  // Note: key_hash stores the SHA-256 hash of the actual API key for security.
+  // The plaintext key is never stored - only shown once when issued.
+  // This is similar to password hashing: if the DB is compromised, keys remain secure.
+  `CREATE TABLE IF NOT EXISTS api_keys (
+    id VARCHAR(36) PRIMARY KEY,
+    key_hash VARCHAR(64) NOT NULL UNIQUE,
+    name VARCHAR(255) NOT NULL,
+    status api_key_status NOT NULL DEFAULT 'active',
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    last_used_at TIMESTAMPTZ,
+    revoked_at TIMESTAMPTZ
+  )`,
+
+  // Create indexes for api_keys
+  `CREATE INDEX IF NOT EXISTS ix_api_keys_key_hash ON api_keys(key_hash)`,
+  `CREATE INDEX IF NOT EXISTS ix_api_keys_status ON api_keys(status)`,
 ];
 
 async function migrate() {

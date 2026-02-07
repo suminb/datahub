@@ -10,6 +10,10 @@
     "format": "prettier --write .",
     "type-check": "tsc --noEmit",
     "db:migrate": "node --env-file=.env scripts/migrate.mjs",
+    "apikey:issue": "node --env-file=.env scripts/apikey.mjs issue",
+    "apikey:list": "node --env-file=.env scripts/apikey.mjs list",
+    "apikey:revoke": "node --env-file=.env scripts/apikey.mjs revoke",
+    "apikey:delete": "node --env-file=.env scripts/apikey.mjs delete",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage"

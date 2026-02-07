@@ -119,7 +119,32 @@ datahub/
         └── db.ts            # PostgreSQL connection
 ```
 
+
 ## API Reference
+
+### Authentication
+
+All API endpoints require authentication using an API key. Include your API key in the `X-DataHub-API-Key` header:
+
+```bash
+curl -H "X-DataHub-API-Key: dh_your_api_key_here" http://localhost:3000/api/datasets
+```
+
+**Managing API Keys:**
+
+```bash
+# Issue a new API key
+npm run apikey:issue <key-name>
+
+# List all API keys
+npm run apikey:list
+
+# Revoke an API key (marks as inactive)
+npm run apikey:revoke <key-name-or-id>
+
+# Delete an API key permanently
+npm run apikey:delete <key-name-or-id>
+```
 
 ### Interactive API Documentation
 
@@ -167,6 +192,7 @@ The interactive documentation is powered by Swagger UI and provides:
 ```bash
 curl -X POST http://localhost:3000/api/datasets \
   -H "Content-Type: application/json" \
+  -H "X-DataHub-API-Key: dh_your_api_key_here" \
   -d '{
     "name": "confluence-engineering-docs",
     "source_type": "confluence",
@@ -183,10 +209,12 @@ curl -X POST http://localhost:3000/api/datasets \
 
 ```bash
 # Full-text search
-curl "http://localhost:3000/api/datasets/search?q=engineering+docs"
+curl -H "X-DataHub-API-Key: dh_your_api_key_here" \
+  "http://localhost:3000/api/datasets/search?q=engineering+docs"
 
 # Fuzzy search (typo-tolerant)
-curl "http://localhost:3000/api/datasets/search?q=enginering&fuzzy=true"
+curl -H "X-DataHub-API-Key: dh_your_api_key_here" \
+  "http://localhost:3000/api/datasets/search?q=enginering&fuzzy=true"
 ```
 
 ## Testing
@@ -208,10 +236,10 @@ npm run test:watch
 
 ### Test Coverage
 
-- ✅ **44 passing tests** across 7 test suites
+- ✅ **81 passing tests** across 11 test suites
 - ✅ **94-100% coverage** on API routes
 - ✅ **87-100% coverage** on UI components
-- ✅ Full coverage on utility functions
+- ✅ Full coverage on utility functions including authentication
 
 See [TESTING.md](./TESTING.md) for detailed testing documentation.
 
