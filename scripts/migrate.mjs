@@ -13,7 +13,7 @@ const migrations = [
 
   // Create datasets table
   `CREATE TABLE IF NOT EXISTS datasets (
-    id VARCHAR(36) PRIMARY KEY,
+    id UUID PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     version VARCHAR(50) DEFAULT '1.0.0',
     description TEXT,
@@ -76,7 +76,7 @@ const migrations = [
   // The plaintext key is never stored - only shown once when issued.
   // This is similar to password hashing: if the DB is compromised, keys remain secure.
   `CREATE TABLE IF NOT EXISTS api_keys (
-    id VARCHAR(36) PRIMARY KEY,
+    id UUID PRIMARY KEY,
     key_hash VARCHAR(64) NOT NULL UNIQUE,
     name VARCHAR(255) NOT NULL,
     status api_key_status NOT NULL DEFAULT 'active',

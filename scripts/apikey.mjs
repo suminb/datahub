@@ -7,7 +7,7 @@
  * and complexity for basic CRUD operations.
  */
 import pg from "pg";
-import { createHash, randomBytes } from "crypto";
+import { createHash, randomBytes, randomUUID } from "crypto";
 
 const { Pool } = pg;
 
@@ -27,10 +27,6 @@ function hashApiKey(key) {
   return createHash("sha256").update(key).digest("hex");
 }
 
-function generateId() {
-  return randomBytes(16).toString("hex");
-}
-
 async function issueApiKey(name) {
   if (!name) {
     console.error("Error: API key name is required");
@@ -40,7 +36,7 @@ async function issueApiKey(name) {
 
   const apiKey = generateApiKey();
   const keyHash = hashApiKey(apiKey);
-  const id = generateId();
+  const id = randomUUID();
 
   try {
     await pool.query(
