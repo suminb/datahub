@@ -121,7 +121,22 @@ datahub/
 
 ## API Reference
 
-### Endpoints
+### Interactive API Documentation
+
+For a complete, interactive API documentation experience, visit:
+
+**http://localhost:3000/api-docs** (when running locally)
+
+The interactive documentation is powered by Swagger UI and provides:
+- ✅ Complete endpoint descriptions with request/response schemas
+- ✅ Try-it-out functionality to test APIs directly from the browser
+- ✅ Example requests and responses
+- ✅ Parameter validation and type information
+- ✅ OpenAPI 3.0 specification available at `/api/openapi.json`
+
+### Quick Reference
+
+#### Endpoints
 
 | Method   | Endpoint                     | Description                   |
 | -------- | ---------------------------- | ----------------------------- |

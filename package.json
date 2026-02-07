@@ -18,7 +18,8 @@
     "next": "16.1.2",
     "pg": "^8.13.0",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "swagger-ui-react": "^5.31.0"
   },
   "devDependencies": {
     "@next/eslint-plugin-next": "^16.1.5",
@@ -30,6 +31,7 @@
     "@types/pg": "^8",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/swagger-ui-react": "^5.18.0",
     "eslint": "^9",
     "eslint-config-next": "16.1.2",
     "eslint-config-prettier": "^10.1.8",
