@@ -5,6 +5,7 @@
 import { NextRequest } from "next/server";
 import { GET, PATCH, DELETE } from "../route";
 import pool from "@/lib/db";
+import * as middleware from "@/lib/middleware";
 
 // Mock the database pool
 jest.mock("@/lib/db", () => ({
@@ -14,11 +15,19 @@ jest.mock("@/lib/db", () => ({
   },
 }));
 
+// Mock the middleware
+jest.mock("@/lib/middleware");
+
 const mockPool = pool as jest.Mocked<typeof pool>;
+const mockRequireApiKey = middleware.requireApiKey as jest.MockedFunction<
+  typeof middleware.requireApiKey
+>;
 
 describe("/api/datasets/[id] GET", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    // By default, mock successful authentication
+    mockRequireApiKey.mockResolvedValue(null);
   });
 
   it("returns dataset by id", async () => {
@@ -64,6 +73,8 @@ describe("/api/datasets/[id] GET", () => {
 describe("/api/datasets/[id] PATCH", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    // By default, mock successful authentication
+    mockRequireApiKey.mockResolvedValue(null);
   });
 
   it("updates dataset fields", async () => {
@@ -156,6 +167,8 @@ describe("/api/datasets/[id] PATCH", () => {
 describe("/api/datasets/[id] DELETE", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    // By default, mock successful authentication
+    mockRequireApiKey.mockResolvedValue(null);
   });
 
   it("deletes dataset", async () => {

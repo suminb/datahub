@@ -2,8 +2,10 @@
  * @jest-environment node
  */
 
+import { NextRequest } from "next/server";
 import { GET } from "../route";
 import pool from "@/lib/db";
+import * as middleware from "@/lib/middleware";
 
 // Mock the database pool
 jest.mock("@/lib/db", () => ({
@@ -13,11 +15,19 @@ jest.mock("@/lib/db", () => ({
   },
 }));
 
+// Mock the middleware
+jest.mock("@/lib/middleware");
+
 const mockPool = pool as jest.Mocked<typeof pool>;
+const mockRequireApiKey = middleware.requireApiKey as jest.MockedFunction<
+  typeof middleware.requireApiKey
+>;
 
 describe("/api/datasets/stats GET", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    // By default, mock successful authentication
+    mockRequireApiKey.mockResolvedValue(null);
   });
 
   it("returns aggregated statistics", async () => {
@@ -38,7 +48,8 @@ describe("/api/datasets/stats GET", () => {
         ],
       } as any);
 
-    const response = await GET();
+    const request = new NextRequest("http://localhost:3000/api/datasets/stats");
+    const response = await GET(request);
     const data = await response.json();
 
     expect(response.status).toBe(200);
@@ -65,7 +76,8 @@ describe("/api/datasets/stats GET", () => {
       .mockResolvedValueOnce({ rows: [] } as any)
       .mockResolvedValueOnce({ rows: [] } as any);
 
-    const response = await GET();
+    const request = new NextRequest("http://localhost:3000/api/datasets/stats");
+    const response = await GET(request);
     const data = await response.json();
 
     expect(data.total_datasets).toBe(0);
@@ -84,7 +96,8 @@ describe("/api/datasets/stats GET", () => {
       .mockResolvedValueOnce({ rows: [] } as any)
       .mockResolvedValueOnce({ rows: [] } as any);
 
-    const response = await GET();
+    const request = new NextRequest("http://localhost:3000/api/datasets/stats");
+    const response = await GET(request);
     const data = await response.json();
 
     expect(data.total_datasets).toBe(5);
@@ -95,7 +108,8 @@ describe("/api/datasets/stats GET", () => {
   it("handles database errors", async () => {
     mockPool.query.mockRejectedValueOnce(new Error("Query failed"));
 
-    const response = await GET();
+    const request = new NextRequest("http://localhost:3000/api/datasets/stats");
+    const response = await GET(request);
 
     expect(response.status).toBe(500);
     const data = await response.json();

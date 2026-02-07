@@ -5,6 +5,7 @@
 import { NextRequest } from "next/server";
 import { GET, POST } from "../route";
 import pool from "@/lib/db";
+import * as middleware from "@/lib/middleware";
 
 // Mock the database pool
 jest.mock("@/lib/db", () => ({
@@ -14,11 +15,19 @@ jest.mock("@/lib/db", () => ({
   },
 }));
 
+// Mock the middleware
+jest.mock("@/lib/middleware");
+
 const mockPool = pool as jest.Mocked<typeof pool>;
+const mockRequireApiKey = middleware.requireApiKey as jest.MockedFunction<
+  typeof middleware.requireApiKey
+>;
 
 describe("/api/datasets GET", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    // By default, mock successful authentication
+    mockRequireApiKey.mockResolvedValue(null);
   });
 
   it("returns paginated datasets", async () => {
@@ -100,6 +109,8 @@ describe("/api/datasets GET", () => {
 describe("/api/datasets POST", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    // By default, mock successful authentication
+    mockRequireApiKey.mockResolvedValue(null);
   });
 
   it("creates a new dataset", async () => {
