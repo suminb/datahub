@@ -117,4 +117,17 @@ describe("requireApiKey middleware", () => {
     expect(response?.status).toBe(401);
     expect(mockExtractApiKey).toHaveBeenCalled();
   });
+
+  it("does not bypass authentication in production even if DISABLE_API_KEY_AUTH is true", async () => {
+    process.env.DISABLE_API_KEY_AUTH = "true";
+    process.env.NODE_ENV = "production";
+    mockExtractApiKey.mockReturnValue(null);
+
+    const request = new NextRequest("http://localhost:3000/api/datasets");
+    const response = await requireApiKey(request);
+
+    expect(response).not.toBeNull();
+    expect(response?.status).toBe(401);
+    expect(mockExtractApiKey).toHaveBeenCalled();
+  });
 });

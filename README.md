@@ -284,7 +284,7 @@ npm run build             # Build
 | Variable                 | Description                                      |
 | ------------------------ | ------------------------------------------------ |
 | `DATABASE_URL`           | PostgreSQL connection string                     |
-| `DISABLE_API_KEY_AUTH`   | Set to "true" to disable API key verification for testing (allows all requests) |
+| `DISABLE_API_KEY_AUTH`   | (Testing only) Set to "true" to disable API key verification. Only works in non-production environments. Never use in production! |
 
 ## License
 
