@@ -64,12 +64,19 @@ const migrations = [
   `CREATE INDEX IF NOT EXISTS ix_datasets_created_at ON datasets(created_at)`,
   `CREATE INDEX IF NOT EXISTS ix_datasets_tags ON datasets USING GIN(tags)`,
 
+  // Create enum type for API key status
+  `DO $$ BEGIN
+    CREATE TYPE api_key_status AS ENUM ('active', 'revoked');
+  EXCEPTION
+    WHEN duplicate_object THEN null;
+  END $$`,
+
   // Create api_keys table
   `CREATE TABLE IF NOT EXISTS api_keys (
     id VARCHAR(36) PRIMARY KEY,
     key_hash VARCHAR(64) NOT NULL UNIQUE,
     name VARCHAR(255) NOT NULL,
-    status VARCHAR(50) DEFAULT 'active',
+    status api_key_status DEFAULT 'active',
     created_at TIMESTAMPTZ DEFAULT NOW(),
     last_used_at TIMESTAMPTZ,
     revoked_at TIMESTAMPTZ
