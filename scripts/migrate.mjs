@@ -72,11 +72,14 @@ const migrations = [
   END $$`,
 
   // Create api_keys table
+  // Note: key_hash stores the SHA-256 hash of the actual API key for security.
+  // The plaintext key is never stored - only shown once when issued.
+  // This is similar to password hashing: if the DB is compromised, keys remain secure.
   `CREATE TABLE IF NOT EXISTS api_keys (
     id VARCHAR(36) PRIMARY KEY,
     key_hash VARCHAR(64) NOT NULL UNIQUE,
     name VARCHAR(255) NOT NULL,
-    status api_key_status DEFAULT 'active',
+    status api_key_status NOT NULL DEFAULT 'active',
     created_at TIMESTAMPTZ DEFAULT NOW(),
     last_used_at TIMESTAMPTZ,
     revoked_at TIMESTAMPTZ
