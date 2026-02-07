@@ -3,6 +3,99 @@ import pool from "@/lib/db";
 import { getDatabaseErrorMessage } from "@/lib/errors";
 import { requireApiKey } from "@/lib/middleware";
 
+/**
+ * @openapi
+ * /datasets/search:
+ *   get:
+ *     summary: Search datasets
+ *     description: Full-text search with optional fuzzy matching and filters
+ *     tags:
+ *       - Datasets
+ *     parameters:
+ *       - name: q
+ *         in: query
+ *         required: true
+ *         description: Search query
+ *         schema:
+ *           type: string
+ *       - name: source_type
+ *         in: query
+ *         description: Filter by source type
+ *         schema:
+ *           type: string
+ *       - name: status
+ *         in: query
+ *         description: Filter by status
+ *         schema:
+ *           type: string
+ *       - name: owner
+ *         in: query
+ *         description: Filter by owner
+ *         schema:
+ *           type: string
+ *       - name: tags
+ *         in: query
+ *         description: Comma-separated list of tags
+ *         schema:
+ *           type: string
+ *       - name: fuzzy
+ *         in: query
+ *         description: Enable fuzzy matching (typo-tolerant)
+ *         schema:
+ *           type: boolean
+ *           default: false
+ *       - name: limit
+ *         in: query
+ *         description: 'Results per page (default: 20, max: 100)'
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           maximum: 100
+ *           default: 20
+ *       - name: offset
+ *         in: query
+ *         description: Pagination offset
+ *         schema:
+ *           type: integer
+ *           minimum: 0
+ *           default: 0
+ *     responses:
+ *       200:
+ *         description: Search results
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 items:
+ *                   type: array
+ *                   items:
+ *                     allOf:
+ *                       - $ref: '#/components/schemas/Dataset'
+ *                       - type: object
+ *                         properties:
+ *                           rank:
+ *                             type: number
+ *                             description: Search relevance rank
+ *                 total:
+ *                   type: integer
+ *                 limit:
+ *                   type: integer
+ *                 offset:
+ *                   type: integer
+ *       400:
+ *         description: Bad request (missing query parameter)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 export async function GET(request: NextRequest) {
   const authError = await requireApiKey(request);
   if (authError) return authError;
