@@ -12,8 +12,15 @@ const mockValidateApiKey = auth.validateApiKey as jest.MockedFunction<typeof aut
 const mockExtractApiKey = auth.extractApiKey as jest.MockedFunction<typeof auth.extractApiKey>;
 
 describe("requireApiKey middleware", () => {
+  const originalEnv = process.env;
+
   beforeEach(() => {
     jest.clearAllMocks();
+    process.env = { ...originalEnv };
+  });
+
+  afterAll(() => {
+    process.env = originalEnv;
   });
 
   it("returns 401 when no API key is provided", async () => {
@@ -74,5 +81,40 @@ describe("requireApiKey middleware", () => {
     await requireApiKey(request);
 
     expect(mockExtractApiKey).toHaveBeenCalledWith(request.headers);
+  });
+
+  it("bypasses authentication when DISABLE_API_KEY_AUTH is true", async () => {
+    process.env.DISABLE_API_KEY_AUTH = "true";
+
+    const request = new NextRequest("http://localhost:3000/api/datasets");
+    const response = await requireApiKey(request);
+
+    expect(response).toBeNull();
+    expect(mockExtractApiKey).not.toHaveBeenCalled();
+    expect(mockValidateApiKey).not.toHaveBeenCalled();
+  });
+
+  it("does not bypass authentication when DISABLE_API_KEY_AUTH is false", async () => {
+    process.env.DISABLE_API_KEY_AUTH = "false";
+    mockExtractApiKey.mockReturnValue(null);
+
+    const request = new NextRequest("http://localhost:3000/api/datasets");
+    const response = await requireApiKey(request);
+
+    expect(response).not.toBeNull();
+    expect(response?.status).toBe(401);
+    expect(mockExtractApiKey).toHaveBeenCalled();
+  });
+
+  it("does not bypass authentication when DISABLE_API_KEY_AUTH is not set", async () => {
+    delete process.env.DISABLE_API_KEY_AUTH;
+    mockExtractApiKey.mockReturnValue(null);
+
+    const request = new NextRequest("http://localhost:3000/api/datasets");
+    const response = await requireApiKey(request);
+
+    expect(response).not.toBeNull();
+    expect(response?.status).toBe(401);
+    expect(mockExtractApiKey).toHaveBeenCalled();
   });
 });

@@ -7,6 +7,11 @@ import { extractApiKey, validateApiKey } from "@/lib/auth";
  * Returns NextResponse if authentication fails, null if authentication succeeds
  */
 export async function requireApiKey(request: NextRequest): Promise<NextResponse | null> {
+  // Allow bypassing API key authentication for testing purposes
+  if (process.env.DISABLE_API_KEY_AUTH === "true") {
+    return null;
+  }
+
   const apiKey = extractApiKey(request.headers);
 
   if (!apiKey) {

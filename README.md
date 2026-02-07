@@ -130,6 +130,18 @@ All API endpoints require authentication using an API key. Include your API key 
 curl -H "X-DataHub-API-Key: dh_your_api_key_here" http://localhost:3000/api/datasets
 ```
 
+**For Testing Only:** You can temporarily disable API key verification by setting the `DISABLE_API_KEY_AUTH` environment variable:
+
+```bash
+# Disable authentication for local testing
+DISABLE_API_KEY_AUTH=true npm run dev
+
+# Or for a single curl request
+curl http://localhost:3000/api/datasets  # No API key needed when disabled
+```
+
+⚠️ **Warning:** Never use `DISABLE_API_KEY_AUTH=true` in production environments. This flag is intended only for local testing and development.
+
 **Managing API Keys:**
 
 ```bash
@@ -269,9 +281,10 @@ npm run build             # Build
 
 ## Configuration
 
-| Variable       | Description                  |
-| -------------- | ---------------------------- |
-| `DATABASE_URL` | PostgreSQL connection string |
+| Variable                 | Description                                      |
+| ------------------------ | ------------------------------------------------ |
+| `DATABASE_URL`           | PostgreSQL connection string                     |
+| `DISABLE_API_KEY_AUTH`   | Set to "true" to disable API key verification for testing (allows all requests) |
 
 ## License
 
